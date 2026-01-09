@@ -1,0 +1,58 @@
+[
+{
+    "domain": ".youtube.com",
+    "expirationDate": 1767962059,
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "GPS",
+    "path": "/",
+    "sameSite": "unspecified",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "1",
+    "id": 1
+},
+{
+    "domain": ".youtube.com",
+    "expirationDate": 1783512261,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "PREF",
+    "path": "/",
+    "sameSite": "unspecified",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "f6=40000000&tz=Europe.Berlin",
+    "id": 2
+},
+{
+    "domain": ".youtube.com",
+    "expirationDate": 1783512259,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "SOCS",
+    "path": "/",
+    "sameSite": "lax",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "CAISFggDEgk4NTI0NDM5MzcaBWVuLUdCIAEaBgiAioHLBg",
+    "id": 3
+},
+{
+    "domain": ".youtube.com",
+    "expirationDate": 1783512259,
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "VISITOR_INFO1_LIVE",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "qR7L3jT7b8k",
+    "id": 4
+}
+]
