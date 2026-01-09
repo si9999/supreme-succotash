@@ -9,17 +9,14 @@ let agent;
 try {
     if (fs.existsSync('cookies.json')) {
         const cookies = JSON.parse(fs.readFileSync('cookies.json'));
-        // إنشاء الوكيل
         agent = ytdl.createAgent(cookies);
         console.log('✅ Cookies loaded!');
-    } else {
-        console.log('⚠️ No cookies found!');
     }
 } catch (error) {
     console.error('❌ Cookie Error:', error.message);
 }
 
-app.get('/', (req, res) => res.send('Server Active 🎵'));
+app.get('/', (req, res) => res.send('Server Active (Universal Mode) 🎵'));
 
 app.get('/play', async (req, res) => {
     try {
@@ -29,32 +26,42 @@ app.get('/play', async (req, res) => {
         const url = 'https://www.youtube.com/watch?v=' + id;
         console.log('Requesting:', url);
 
-        // 1. جلب المعلومات (لاحظ أن agent أصبح خارج requestOptions)
+        // 1. جلب المعلومات مع إجبار IPv4
         const info = await ytdl.getInfo(url, { 
             agent: agent,
-            requestOptions: {
-                // إجبار IPv4 لأن Render يستخدم IPv6 المحظور
-                family: 4 
-            }
+            requestOptions: { family: 4 }
         });
 
-        // 2. اختيار الصيغة
-        const format = ytdl.chooseFormat(info.formats, { 
+        console.log(`Found ${info.formats.length} formats.`);
+
+        // 2. اختيار الصيغة (التعديل هنا)
+        // بدلاً من audioonly، سنبحث عن أي صيغة تحتوي على صوت
+        let format = ytdl.chooseFormat(info.formats, { 
             quality: 'highestaudio', 
             filter: 'audioonly' 
         });
 
-        if (!format) return res.status(404).send('No Format Found');
+        // إذا لم يجد صوت فقط، ابحث عن أي فيديو فيه صوت (خطة بديلة)
+        if (!format) {
+            console.log('Audio-only failed, searching for any audio track...');
+            format = ytdl.chooseFormat(info.formats, { 
+                filter: format => format.hasAudio 
+            });
+        }
 
-        res.header('Content-Type', 'audio/mpeg');
+        if (!format) return res.status(404).send('No Playable Format Found');
+
+        console.log('Playing format:', format.mimeType);
+
+        // مهم: إخبار المتصفح بنوع الملف الحقيقي
+        // إذا كان فيديو، MTA سيشغل الصوت فقط، لا تقلق
+        res.header('Content-Type', format.mimeType.split(';')[0]); // audio/mpeg or video/mp4
 
         // 3. التحميل
         ytdl.downloadFromInfo(info, {
             agent: agent,
             format: format,
-            requestOptions: {
-                family: 4 // إجبار IPv4 أثناء التحميل أيضاً
-            },
+            requestOptions: { family: 4 },
             highWaterMark: 1 << 25
         }).pipe(res);
 
